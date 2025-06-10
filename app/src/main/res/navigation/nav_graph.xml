@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/measureCategoryFragment">
+
+    <fragment
+        android:id="@+id/measureCategoryFragment"
+        android:name="com.example.unitmeasurespractice2.ui.MeasureCategoryFragment"
+        android:label="fragment_measure_category"
+        tools:layout="@layout/fragment_measure_category" >
+        <action
+            android:id="@+id/action_measureCategoryFragment_to_measureConverterFragment"
+            app:destination="@id/measureConverterFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/measureConverterFragment"
+        android:name="com.example.unitmeasurespractice2.ui.MeasureConverterFragment"
+        android:label="fragment_measure_converter"
+        tools:layout="@layout/fragment_measure_converter" />
+</navigation>
