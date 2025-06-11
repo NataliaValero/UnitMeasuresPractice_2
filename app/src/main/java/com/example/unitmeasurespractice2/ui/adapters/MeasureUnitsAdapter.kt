@@ -77,7 +77,6 @@ class MeasureUnitsAdapter(
 
     interface OnMeasureSelectedListener {
 
-        // TODO change measure unit to measurableUnit
         fun onMeasureUnitSelected(selectedUnit: MeasureUnit)
     }
 }
