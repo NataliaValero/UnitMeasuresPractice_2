@@ -38,11 +38,11 @@ class MeasureUnitsAdapter(
         val currentConversionResult = conversionResults.get(position)
 
         // Cada ConversionResult tiene el measure unit y el resultado
-        val measureUnit = currentConversionResult.unit
+        val measurableUnit = currentConversionResult.unit
         val result = currentConversionResult.result
 
-        holder.categoryItemRadioBtn.text = measureUnit.displayName
-        holder.conversionSymbolTv.text = measureUnit.symbol
+        holder.categoryItemRadioBtn.text = measurableUnit.displayName
+        holder.conversionSymbolTv.text = measurableUnit.symbol
         holder.conversionResultTv.text = result.toString()
 
         holder.categoryItemRadioBtn.isChecked = (positionSelected == position)
@@ -55,7 +55,7 @@ class MeasureUnitsAdapter(
             notifyItemChanged(previousPosition)
             notifyItemChanged(positionSelected)
 
-            listener.onMeasureUnitSelected(measureUnit)
+            listener.onMeasureUnitSelected(measurableUnit)
 
         }
     }
@@ -76,6 +76,8 @@ class MeasureUnitsAdapter(
     }
 
     interface OnMeasureSelectedListener {
+
+        // TODO change measure unit to measurableUnit
         fun onMeasureUnitSelected(selectedUnit: MeasureUnit)
     }
 }

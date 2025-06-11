@@ -1,15 +1,16 @@
 package com.example.unitmeasurespractice2.converter
 
 import com.example.unitmeasurespractice2.model.ConversionResult
+import com.example.unitmeasurespractice2.model.Mass
 import com.example.unitmeasurespractice2.model.MeasureUnit
 
 class MassConverter() : Converter {
     override fun convert(amount: Double, fromUnit: MeasureUnit): List<ConversionResult> {
+        val unit = fromUnit as Mass
         return when(fromUnit) {
-            MeasureUnit.KILOGRAM -> convertFromKilograms(amount)
-            MeasureUnit.GRAM -> convertFromGrams(amount)
-            MeasureUnit.POUND -> convertFromPounds(amount)
-            else -> emptyList()
+            Mass.KILOGRAM -> convertFromKilograms(amount)
+            Mass.GRAM -> convertFromGrams(amount)
+            Mass.POUND -> convertFromPounds(amount)
         }
     }
 
@@ -18,9 +19,9 @@ class MassConverter() : Converter {
         val pounds = amount * 2.20462
 
         return listOf(
-            ConversionResult(MeasureUnit.KILOGRAM, amount),
-            ConversionResult(MeasureUnit.GRAM, grams),
-            ConversionResult(MeasureUnit.POUND, pounds)
+            ConversionResult(Mass.KILOGRAM, amount),
+            ConversionResult(Mass.GRAM, grams),
+            ConversionResult(Mass.POUND, pounds)
         )
 
     }
@@ -29,9 +30,9 @@ class MassConverter() : Converter {
         val kg = amount / 1000
         val pounds = kg * 2.20462
         return listOf(
-            ConversionResult(MeasureUnit.KILOGRAM, kg),
-            ConversionResult(MeasureUnit.GRAM, amount),
-            ConversionResult(MeasureUnit.POUND, pounds)
+            ConversionResult(Mass.KILOGRAM, kg),
+            ConversionResult(Mass.GRAM, amount),
+            ConversionResult(Mass.POUND, pounds)
         )
     }
 
@@ -39,9 +40,9 @@ class MassConverter() : Converter {
         val kg = amount / 2.20462
         val grams = kg * 1000
         return listOf(
-            ConversionResult(MeasureUnit.KILOGRAM, kg),
-            ConversionResult(MeasureUnit.GRAM, grams),
-            ConversionResult(MeasureUnit.POUND, amount)
+            ConversionResult(Mass.KILOGRAM, kg),
+            ConversionResult(Mass.GRAM, grams),
+            ConversionResult(Mass.POUND, amount)
         )
     }
 }
