@@ -64,12 +64,12 @@ class MeasureUnitsAdapter(
        return conversionResults.size
     }
 
-    fun setNewResults(newResults: List<Double>) {
+    fun setNewResults(newResults: List<ConversionResult>) {
         if (newResults.size != conversionResults.size) return
 
         // Mantenemos los units pero solo cambiamos los resultados
         conversionResults = conversionResults.mapIndexed { index, oldResult ->
-            oldResult.copy(result = newResults[index])
+            oldResult.copy(result = newResults[index].result)
         }
 
         notifyDataSetChanged()

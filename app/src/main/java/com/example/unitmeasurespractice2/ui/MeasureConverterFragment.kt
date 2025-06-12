@@ -42,10 +42,10 @@ class MeasureConverterFragment : Fragment() {
 
     private fun setObservers() {
         // Only livedata is conversion result
-        viewModel.conversionResult.observe(viewLifecycleOwner) { results->
+        viewModel.uiState.observe(viewLifecycleOwner) { state->
             // when results have changes then we notify to adapter rv
-           //  need a list of double here
-            measureUnitsAdapter.setNewResults(results)
+           //  need a list of double here pero esta trayendo lista de conversion result
+            measureUnitsAdapter.setNewResults(state.conversionResults)
         }
     }
 
@@ -55,7 +55,7 @@ class MeasureConverterFragment : Fragment() {
         measureUnitsAdapter = MeasureUnitsAdapter(conversionResults, object: MeasureUnitsAdapter.OnMeasureSelectedListener{
             override fun onMeasureUnitSelected(selectedUnit: MeasureUnit) {
                 Log.d("Selected unit", selectedUnit.displayName)
-                viewModel.onMeasureUnitUpdated(selectedUnit)
+                viewModel.onUnitSelected(selectedUnit)
             }
         })
 

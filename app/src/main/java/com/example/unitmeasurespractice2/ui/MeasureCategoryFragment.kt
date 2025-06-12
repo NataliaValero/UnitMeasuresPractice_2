@@ -13,7 +13,6 @@ import com.example.unitmeasurespractice2.databinding.FragmentMeasureCategoryBind
 import com.example.unitmeasurespractice2.model.MeasureCategory
 import com.example.unitmeasurespractice2.presentation.MeasureUnitViewModel
 import com.example.unitmeasurespractice2.ui.adapters.MeasureCategoryAdapter
-import com.example.unitmeasurespractice2.ui.adapters.MeasureUnitsAdapter
 
 class MeasureCategoryFragment : Fragment() {
 
@@ -25,7 +24,7 @@ class MeasureCategoryFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentMeasureCategoryBinding.inflate(inflater, container, false)
         val view = binding.root
         return view
@@ -39,13 +38,12 @@ class MeasureCategoryFragment : Fragment() {
 
     private fun setCategoryAdapter() {
 
-        val categories = viewModel.getMeasureCategories()
+        val categories = viewModel.getAllCategories()
         categoryAdapter = MeasureCategoryAdapter(categories, object : MeasureCategoryAdapter.onCategorySelectedListener {
             override fun onMeasureCategorySelected(measureCategory: MeasureCategory) {
                 // que quiero hacer con mi category selected?
                 // le aviso a view model que hay una categoria seleccionada
-                viewModel.onMeasureCategorySelected(measureCategory)
-                // sera que voy al fragment?
+                viewModel.onCategorySelected(measureCategory)
                 findNavController().navigate(R.id.action_measureCategoryFragment_to_measureConverterFragment)
             }
         })
@@ -60,6 +58,4 @@ class MeasureCategoryFragment : Fragment() {
         super.onDestroy()
         _binding = null
     }
-
-
 }

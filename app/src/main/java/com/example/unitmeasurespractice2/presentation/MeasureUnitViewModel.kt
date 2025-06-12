@@ -11,77 +11,106 @@ import com.example.unitmeasurespractice2.model.MeasureCategory
 
 class MeasureUnitViewModel : ViewModel() {
 
-    private var measureCategorySelected: MeasureCategory= getCategories().first()
-
-    private var units: List<MeasureUnit> = getUnitsByCategory(measureCategorySelected)
-
-    private var unitSelected: MeasureUnit = units.first()
-
-    private var amount: Double = INITIAL_RESULT_VALUE
-
-    private var _conversionResult = MutableLiveData<List<Double>>()
-    val conversionResult: LiveData<List<Double>> get() = _conversionResult
-
+    // --- Constants ---
     companion object {
-        private const val INITIAL_RESULT_VALUE = 0.0
+        private const val INITIAL_AMOUNT_VALUE = 0.0
     }
+
+    // --- Initial State Setup ---
+    private val allCategories = MeasureCategory.getMeasureCategories()
+    private val initialCategory = allCategories.first()
+    private val initialUnitsForCategory = getUnitsByCategory(initialCategory)
+    private val initialUnitSelected = initialUnitsForCategory.first()
+
+
+    // Live data measure ui state
+    private var _uiState = MutableLiveData(
+        MeasureUiState(
+            measureCategorySelected = initialCategory,
+            units = initialUnitsForCategory,
+            unitSelected = initialUnitSelected,
+            amount = INITIAL_AMOUNT_VALUE,
+            conversionResults = initialUnitsForCategory.map {
+                ConversionResult(initialUnitSelected, INITIAL_AMOUNT_VALUE)
+            }
+        )
+    )
+
+    val uiState: LiveData<MeasureUiState> get() = _uiState
 
 
     fun generateInitialResults(): List<ConversionResult> {
-        return units.map { ConversionResult(it, INITIAL_RESULT_VALUE) }
+        val currentState = _uiState.value?: return emptyList()
+        return currentState.conversionResults
     }
 
     fun onAmountUpdated(newAmount: Double?) {
-        amount = newAmount?: INITIAL_RESULT_VALUE
-        updateConversionResults()
+
+        _uiState.value?.let { currentState ->
+            val updatedAmount = newAmount?: INITIAL_AMOUNT_VALUE //Default to 0.0 if null
+            _uiState.value = currentState.copy(amount = updatedAmount)
+            updateConversionResults()
+        }
     }
 
-    fun onMeasureUnitUpdated(measurableUnit: MeasureUnit) {
-        unitSelected = measurableUnit
-        updateConversionResults()
+    fun onUnitSelected(measurableUnit: MeasureUnit) {
+
+        _uiState.value?.let { currentState ->
+            val updatedState = currentState.copy(unitSelected = measurableUnit)
+            _uiState.value = updatedState
+
+            updateConversionResults()
+        }
     }
 
-    fun onMeasureCategorySelected(newCategory: MeasureCategory) {
+    fun onCategorySelected(newCategory: MeasureCategory) {
 
-        // Update measure category
-        measureCategorySelected = newCategory
+        _uiState.value?.let { currentState ->
+            val newUnits = getUnitsByCategory(newCategory)
+            val defaultSelectedUnit = newUnits.first()
 
-        // Update all units from category and unit selected (IMPORTANT)
-        units = getUnitsByCategory(newCategory)
-        unitSelected = units.first()
-
-        // Reset conversion result live data
-        updateConversionResults(reset = true)
+            _uiState.value = currentState.copy(
+                measureCategorySelected = newCategory,
+                units = newUnits,
+                unitSelected = defaultSelectedUnit
+            )
+            updateConversionResults(reset = true)
+        }
     }
 
-    fun getMeasureCategories() : List<MeasureCategory>{
+
+    fun getAllCategories() : List<MeasureCategory>{
         return MeasureCategory.getMeasureCategories()
     }
 
-    private fun calculateResults() : List<Double> {
+    private fun calculateResults(state: MeasureUiState) :  List<ConversionResult> {
 
-        val converter = Converter.getConverterByCategory(measureCategorySelected)
-        return converter.convert(amount = amount, fromUnit = unitSelected).map {
-            it.result
-        }
+        val converter = Converter.getConverterByCategory(state.measureCategorySelected)
+
+        return converter.convert(
+            amount = state.amount,
+            fromUnit =  state.unitSelected)
     }
 
 
     private fun updateConversionResults(reset: Boolean = false) {
-        val results = if (reset) {
-            units.map { INITIAL_RESULT_VALUE }
-        } else {
-            calculateResults()
-        }
 
-        _conversionResult.value = results
+        _uiState.value?.let { currentState ->
+
+
+            val results = if(reset) {  // results List<CalculationResult>
+
+                currentState.units.map { ConversionResult(it, INITIAL_AMOUNT_VALUE) }
+            } else {
+                calculateResults(currentState)
+            }
+
+            _uiState.value = currentState.copy(conversionResults = results)
+
+        }
     }
 
     private fun getUnitsByCategory(category: MeasureCategory) : List<MeasureUnit>{
         return MeasureUnit.getUnitsByCategory(category)
-    }
-
-    private fun getCategories() : List<MeasureCategory> {
-        return MeasureCategory.getMeasureCategories()
     }
 }
